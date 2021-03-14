@@ -24,6 +24,7 @@ export let ytiles = 0;
 export const bs = 16;
 // Editor vars
 export let gameState = "editor";
+export let currentLevelId = 1;
 
 // Current object that will be placed
 export let selObj = 1;

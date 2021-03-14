@@ -1,9 +1,10 @@
 /* eslint-disable no-multi-spaces */
-import { xe, xtiles, ye, ytiles, solidObjects, bs, player } from "../game.js";
+import {  xtiles, ytiles, solidObjects, bs, player, currentLevelId } from "../game.js";
 import * as world from "../objects/world.js";
 import levelData from "@/database/database.js"
 
-// Load template
+// Current level object
+let currentLevelObject = null;
 
 function generateWalls () {
   for (let iy = 0; iy <= ytiles; iy++) {
@@ -19,10 +20,12 @@ function generateWalls () {
 /**
  *  Room functions
  **/
-export function generateLevel (levelId) {
-  const level = loadLevel(levelId);
+export function generateLevel () {
+  const level = loadLevel(currentLevelId);
 
   level.then(l => {
+    currentLevelObject = l
+
     for (const yAx in l) {
       for (const xAx in l[yAx]) {
         // Loop over each generated object
@@ -30,7 +33,7 @@ export function generateLevel (levelId) {
         generateObjectAtPosition(xAx * bs + bs, yAx * bs + bs, l[yAx][xAx]);
       }
     }
-  })
+  });
 }
 
 /**
@@ -40,11 +43,16 @@ export function generateLevel (levelId) {
  * @param {*} objId ID of object to generate
  */
 
-export function generateObjectAtPosition (x, y, objId) {
+export function generateObjectAtPosition (x, y, objId, add = false) {
   // 0 - Air
   // 1 - Wall
   // 2 - Water (player moves twice slower)
   // 3 - Player
+
+  if (add) {
+    currentLevelObject[Math.floor(y / bs) - 1][Math.floor(x / bs) - 1] = objId
+    update()
+  }
 
   switch (objId) {
     case 1:
@@ -71,7 +79,7 @@ async function loadLevel (id) {
 
   await levelData.getLevel(id)
     .then(response => {
-      level = JSON.parse(response.data.level)
+      level = response.data.level
     })
     .catch(error => {
       console.log(error)
@@ -80,9 +88,16 @@ async function loadLevel (id) {
   return level
 }
 
-async function createLevel (id) {}
+async function createLevel (levelId) {
+  await levelData.addLevel({})
+}
 
-async function updateLevel (id) {}
+async function update () {
+  await levelData.updateLevel({ id: currentLevelId, level: currentLevelObject })
+    .catch(e => {
+      console.log(e)
+    })
+}
 
 /**
  *  For generating things in the world
@@ -90,5 +105,5 @@ async function updateLevel (id) {}
 
 export function __generate () {
   generateWalls();
-  generateLevel(1);
+  generateLevel();
 }

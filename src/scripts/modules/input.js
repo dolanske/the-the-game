@@ -32,18 +32,16 @@ export function initInput () {
       clickX = Math.round(e.clientX - boundClient.left);
       clickY = Math.round(e.clientY - boundClient.top);
 
-      const setX = Math.round(clickX / bs) * bs;
-      const setY = Math.round(clickY / bs) * bs;
+      const setX = Math.floor(clickX / bs) * bs;
+      const setY = Math.floor(clickY / bs) * bs;
 
-      generateObjectAtPosition(setX, setY, selObj)
+      generateObjectAtPosition(setX, setY, selObj, true)
     }
   })
 
   document.addEventListener("mouseup", (e) => {
     clickX = null;
     clickY = null;
-
-    console.log("moue up")
   })
 }
 

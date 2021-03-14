@@ -20,8 +20,8 @@ export default {
   removeLevel (id) {
     return apiClient.delete(`/level-data/${id}`)
   },
-  updateLevel (id) {
-    apiClient.delete(`/level-data/${id}`)
-    return apiClient.post("/level-data", `${id}`)
+  updateLevel (data) {
+    apiClient.delete(`/level-data/${data.id}`)
+    return apiClient.post("/level-data", data)
   }
 }
