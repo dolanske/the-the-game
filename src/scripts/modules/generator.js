@@ -1,5 +1,5 @@
-import { xe, xtiles, ye, ytiles, solidObjects, bs } from "../game.js";
-// import { handlePromise } from "./helpers.js";
+/* eslint-disable no-multi-spaces */
+import { xe, xtiles, ye, ytiles, solidObjects, bs, player } from "../game.js";
 import * as world from "../objects/world.js";
 import levelData from "@/database/database.js"
 
@@ -8,10 +8,10 @@ import levelData from "@/database/database.js"
 function generateWalls () {
   for (let iy = 0; iy <= ytiles; iy++) {
     for (let ix = 0; ix <= xtiles; ix++) {
-      if (iy === 0) solidObjects.push(new world.Ground(bs * ix, iy)); // Top wall
-      if (iy === ytiles) solidObjects.push(new world.Ground(bs * ix, bs * iy - bs)); // Bottom wall
-      if (ix === 0) solidObjects.push(new world.Ground(ix, iy * bs)); // Left wall
-      if (ix === xtiles) solidObjects.push(new world.Ground(ix * bs - bs, iy * bs)); // Right Wall
+      if (iy === 0)       solidObjects.push(new world.Ground(bs * ix, iy)); // Top wall
+      if (iy === ytiles)  solidObjects.push(new world.Ground(bs * ix, bs * iy - bs)); // Bottom wall
+      if (ix === 0)       solidObjects.push(new world.Ground(ix, iy * bs)); // Left wall
+      if (ix === xtiles)  solidObjects.push(new world.Ground(ix * bs - bs, iy * bs)); // Right Wall
     }
   }
 }
@@ -19,15 +19,15 @@ function generateWalls () {
 /**
  *  Room functions
  **/
-export function generateRoomOne () {
-  const level = loadLevel(1);
+export function generateLevel (levelId) {
+  const level = loadLevel(levelId);
 
-  level.then(level => {
-    for (const yAx in level) {
-      for (const xAx in level[yAx]) {
+  level.then(l => {
+    for (const yAx in l) {
+      for (const xAx in l[yAx]) {
         // Loop over each generated object
 
-        generateObjectAtPosition(xAx * bs + bs, yAx * bs + bs, level[yAx][xAx]);
+        generateObjectAtPosition(xAx * bs + bs, yAx * bs + bs, l[yAx][xAx]);
       }
     }
   })
@@ -40,7 +40,7 @@ export function generateRoomOne () {
  * @param {*} objId ID of object to generate
  */
 
-function generateObjectAtPosition (x, y, objId) {
+export function generateObjectAtPosition (x, y, objId) {
   // 0 - Air
   // 1 - Wall
   // 2 - Water (player moves twice slower)
@@ -52,6 +52,11 @@ function generateObjectAtPosition (x, y, objId) {
       break;
     case 2:
       solidObjects.push(new world.Water(x, y));
+      break;
+    case 3:
+      player.x = x;
+      player.y = y;
+      break;
   }
 }
 
@@ -85,5 +90,5 @@ async function updateLevel (id) {}
 
 export function __generate () {
   generateWalls();
-  generateRoomOne();
+  generateLevel(1);
 }

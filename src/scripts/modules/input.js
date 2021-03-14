@@ -1,11 +1,14 @@
 import { clamp } from "./helpers.js";
+import { gameState, bs, selObj } from "../game.js"
+import { generateObjectAtPosition } from "./generator.js"
 
 export let vsp = 0;
 export let hsp = 0;
+export let clickX = null;
+export let clickY = null;
 export const keys = [];
-const allowJump = true;
 
-export function initKeyboard () {
+export function initInput () {
   // Fuck you solution
   keys.ArrowRight = false;
   keys.ArrowLeft = false;
@@ -20,6 +23,28 @@ export function initKeyboard () {
   document.addEventListener("keyup", (e) => {
     keys[e.key] = false;
   });
+
+  document.addEventListener("mousedown", (e) => {
+    // For now hardcode editor into click detection in canvas
+    if (e.target.id === "canvas" && gameState === "editor") {
+      const boundClient = e.target.getBoundingClientRect();
+
+      clickX = Math.round(e.clientX - boundClient.left);
+      clickY = Math.round(e.clientY - boundClient.top);
+
+      const setX = Math.round(clickX / bs) * bs;
+      const setY = Math.round(clickY / bs) * bs;
+
+      generateObjectAtPosition(setX, setY, selObj)
+    }
+  })
+
+  document.addEventListener("mouseup", (e) => {
+    clickX = null;
+    clickY = null;
+
+    console.log("moue up")
+  })
 }
 
 export function handleKeys () {

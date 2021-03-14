@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /**
  * Handle imports
  */
@@ -13,14 +14,19 @@ import { Player } from "./objects/player.js";
 
 export let canvas = null;
 export let ctx = null;
-export let player = null;
-export const solidObjects = [];
+export let player = new Player(0, 0);
+export let solidObjects = [];
 export let xe = 0;
 export let ye = 0;
-export const bs = 16;
-
+export let dtInterval;
 export let xtiles = 0;
 export let ytiles = 0;
+export const bs = 16;
+// Editor vars
+export let gameState = "editor";
+
+// Current object that will be placed
+export let selObj = 1;
 
 export function __init () {
   // Assign variables after vue is ready
@@ -31,14 +37,12 @@ export function __init () {
   xtiles = xe / bs;
   ytiles = ye / bs;
 
-  // Rus once at the start
+  // Run once at the start
   world.__generate();
-
-  player = new Player(64, ye / 2);
-  input.initKeyboard();
+  input.initInput();
 
   let lastUpdate = Date.now();
-  const dtInterval = setInterval(tick, 1000 / 60);
+  dtInterval = setInterval(tick, 1000 / 60);
 
   function tick () {
     const now = Date.now();
@@ -67,7 +71,9 @@ function draw (time) {
  */
 function update (time) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
   input.handleKeys();
+
   player.move(input.hsp, input.vsp, solidObjects);
 }
 
