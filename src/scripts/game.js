@@ -40,7 +40,7 @@ export function __init () {
 
   // Run once at the start
   world.__generate();
-  input.initInput();
+  input.__input();
 
   let lastUpdate = Date.now();
   dtInterval = setInterval(tick, 1000 / 60);

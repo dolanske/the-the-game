@@ -8,7 +8,7 @@ export let clickX = null;
 export let clickY = null;
 export const keys = [];
 
-export function initInput () {
+export function __input () {
   // Fuck you solution
   keys.ArrowRight = false;
   keys.ArrowLeft = false;
